@@ -27,6 +27,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.EmailField(max_length=100, unique=True)
+    wallet_address = models.CharField(max_length=255, unique=True, null=True, blank=True)
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -58,7 +59,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=100, blank=True, null=True)
     employee_code = models.IntegerField(null=True)
 
-    image = models.ImageField(upload_to='profile-images', blank=True, null=True)
+    # image = models.ImageField(upload_to='profile-images', blank=True, null=True)
     phone_number = models.CharField(max_length=10)
 
     created_at = models.DateTimeField(auto_now_add=True)

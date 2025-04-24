@@ -44,7 +44,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["username"] = user.username
         data["firstname"] = user.profile.first_name
         data["lastname"] = user.profile.last_name
-        data["user_image"] = 'http://192.168.2.6/' + user.profile.image.url
+        # data["user_image"] = 'http://192.168.2.6/' + user.profile.image.url
 
         return data
 

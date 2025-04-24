@@ -10,7 +10,7 @@ urlpatterns = [
     path('verify/<str:phone>', views.verify, name='verify'),
     path('login/phone', views.login_phone_view, name='login-phone'),
     # path('api/v1/', include('accounts.api.v1.urls', namespace='accounts-api')),
-    path('/api/profile/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/profile/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', views.TokenRefreshView.as_view(), name='token_refresh'),
 

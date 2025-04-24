@@ -134,5 +134,5 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-# class TokenRefreshView(TokenRefreshView):
-    # pass
+class TokenRefreshView(TokenRefreshView):
+    pass
