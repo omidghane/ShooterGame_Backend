@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/profile/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/register/', views.RegisterAPIView.as_view(), name='register-api'),
 
     
 ]

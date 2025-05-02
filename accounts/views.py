@@ -5,8 +5,10 @@ from django.contrib import messages
 
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError
 
 from .forms import *
 from .models import *
@@ -19,6 +21,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -136,3 +139,34 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 class TokenRefreshView(TokenRefreshView):
     pass
+
+
+class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        username = data.get("username")
+        password = data.get("password")
+        is_personnel = data.get("is_personnel", False)
+
+        if not username or not password:
+            raise ValidationError({"error": "Username and password are required."})
+
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(username=username, password=password, is_personnel=is_personnel)
+        user.save()
+
+        # Generate tokens for the user
+        refresh = RefreshToken.for_user(user)
+        tokens = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
+
+        return Response({
+            "message": "User registered successfully.",
+            "tokens": tokens
+        }, status=status.HTTP_201_CREATED)

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
  
     'myapp',
@@ -156,8 +157,11 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,                 # Enable refresh token rotation
+    "BLACKLIST_AFTER_ROTATION": True,              # Blacklist old refresh tokens after rotation
+    "ALGORITHM": "HS256",                          # Use HS256 algorithm for signing
+    "SIGNING_KEY": SECRET_KEY,                     # Use the project's secret key for signing
+    "AUTH_HEADER_TYPES": ("Bearer",),             # Specify the authorization header type
 }
 
 # from dotenv import load_dotenv
