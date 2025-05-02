@@ -11,7 +11,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8080
+# EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c"]
-CMD [ "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8080"]
+# ENTRYPOINT ["sh", "-c"]
+CMD [ "python manage.py makemigrations && python manage.py migrate"]
