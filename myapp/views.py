@@ -44,24 +44,14 @@ class NFTAssetClass(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # user = request.username
-        # assets = NFTAsset.objects.filter(owner=user)
+        user = request.user  # Get the authenticated user
+        assets = NFTAsset.objects.filter(owner=user)  # Fetch NFTs owned by the user
 
-        # data = []
-        # for asset in assets:
-        #     data.append({
-        #         "token_id": asset.token_id,
-        #         "name": asset.name,
-        #         "image_url": asset.image_url,
-        #         "metadata": asset.metadata,
-        #     })
+        nft_names = [asset.name for asset in assets]  # Extract NFT names
 
-        # return Response({
-        #     "username": user.username,
-        #     "assets": data
-        # })
         return Response({
-            "names": ["Tough", "Normal"]
+            "username": user.username,
+            "nft_names": nft_names
         })
 
 class FetchUserNFTs(APIView):
