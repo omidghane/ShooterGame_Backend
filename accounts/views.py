@@ -138,8 +138,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
-
-class TokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200:
@@ -148,6 +146,10 @@ class TokenRefreshView(TokenRefreshView):
             response.data['refresh_expires_in'] = int(refresh_token_lifetime.total_seconds())
             response.data['access_expires_in'] = int(access_token_lifetime.total_seconds())
         return response
+
+
+class TokenRefreshView(TokenRefreshView):
+    pass
 
 
 class RegisterAPIView(APIView):
