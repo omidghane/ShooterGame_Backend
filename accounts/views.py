@@ -15,6 +15,8 @@ from .models import *
 import random
 from mysite.utils.sendsms import send_sms
 from .serializers import *
+from datetime import timedelta
+from django.conf import settings
 # Create your views here.
 
 from rest_framework_simplejwt.views import (
@@ -138,7 +140,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class TokenRefreshView(TokenRefreshView):
-    pass
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            refresh_token_lifetime = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+            access_token_lifetime = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
+            response.data['refresh_expires_in'] = int(refresh_token_lifetime.total_seconds())
+            response.data['access_expires_in'] = int(access_token_lifetime.total_seconds())
+        return response
 
 
 class RegisterAPIView(APIView):
