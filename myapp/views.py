@@ -56,20 +56,18 @@ class NFTAssetClass(APIView):
 
 class FetchUserNFTs(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]  # Optional, but keeps it secure
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Get the username or wallet from query params
+        # Get the username from query params
         username = request.query_params.get('username')
-        wallet_address = request.query_params.get('wallet')
+
+        if not username:
+            return Response({"error": "Username is required."}, status=400)
 
         try:
-            if username:
-                user = User.objects.get(username=username)
-            elif wallet_address:
-                user = User.objects.get(wallet_address=wallet_address)
-            else:
-                return Response({"error": "Username or wallet address is required."}, status=400)
+            user = User.objects.get(username=username)
+            wallet_address = user.wallet_address  # Fetch wallet address from the user
 
             # Fetch their NFTs
             assets = NFTAsset.objects.filter(owner=user)
@@ -84,7 +82,47 @@ class FetchUserNFTs(APIView):
                 for asset in assets
             ]
 
-            return Response({"user": user.username, "assets": data})
+            return Response({"user": user.username, "wallet_address": wallet_address, "assets": data})
 
         except User.DoesNotExist:
             return Response({"error": "User not found."}, status=404)
+
+
+class ManageNFT(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Add an NFT to the NFTAsset table
+        data = request.data
+        token_id = data.get("token_id")
+        name = data.get("name")
+        image_url = data.get("image_url")
+        metadata = data.get("metadata")
+
+        if not all([token_id, name, image_url, metadata]):
+            return Response({"error": "All fields (token_id, name, image_url, metadata) are required."}, status=400)
+
+        NFTAsset.objects.create(
+            token_id=token_id,
+            name=name,
+            image_url=image_url,
+            metadata=metadata,
+            owner=request.user  # Assign the authenticated user as the owner
+        )
+
+        return Response({"message": "NFT added successfully."}, status=201)
+
+    def delete(self, request):
+        # Remove or sell an NFT
+        token_id = request.data.get("token_id")
+
+        if not token_id:
+            return Response({"error": "Token ID is required."}, status=400)
+
+        try:
+            nft = NFTAsset.objects.get(token_id=token_id, owner=request.user)
+            nft.delete()
+            return Response({"message": "NFT removed or sold successfully."}, status=200)
+        except NFTAsset.DoesNotExist:
+            return Response({"error": "NFT not found or you are not the owner."}, status=404)
