@@ -54,38 +54,38 @@ class NFTAssetClass(APIView):
             "nft_names": nft_names
         }) 
 
-class FetchUserNFTs(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+# class FetchUserNFTs(APIView):
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        # Get the username from query params
-        username = request.query_params.get('username')
+#     def get(self, request):
+#         # Get the username from query params
+#         username = request.query_params.get('username')
 
-        if not username:
-            return Response({"error": "Username is required."}, status=400)
+#         if not username:
+#             return Response({"error": "Username is required."}, status=400)
 
-        try:
-            user = User.objects.get(username=username)
-            wallet_address = user.wallet_address  # Fetch wallet address from the user
+#         try:
+#             user = User.objects.get(username=username)
+#             wallet_address = user.wallet_address  # Fetch wallet address from the user
 
-            # Fetch their NFTs
-            assets = NFTAsset.objects.filter(owner=user)
+#             # Fetch their NFTs
+#             assets = NFTAsset.objects.filter(owner=user)
 
-            data = [
-                {
-                    "token_id": asset.token_id,
-                    "name": asset.name,
-                    "image_url": asset.image_url,
-                    "metadata": asset.metadata,
-                }
-                for asset in assets
-            ]
+#             data = [
+#                 {
+#                     "token_id": asset.token_id,
+#                     "name": asset.name,
+#                     "image_url": asset.image_url,
+#                     "metadata": asset.metadata,
+#                 }
+#                 for asset in assets
+#             ]
 
-            return Response({"user": user.username, "wallet_address": wallet_address, "assets": data})
+#             return Response({"user": user.username, "wallet_address": wallet_address, "assets": data})
 
-        except User.DoesNotExist:
-            return Response({"error": "User not found."}, status=404)
+#         except User.DoesNotExist:
+#             return Response({"error": "User not found."}, status=404)
 
 
 class ManageNFT(APIView):
