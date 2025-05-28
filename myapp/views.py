@@ -52,7 +52,7 @@ class NFTAssetClass(APIView):
         return Response({
             "username": user.username,
             "nft_names": nft_names
-        })
+        }) 
 
 class FetchUserNFTs(APIView):
     authentication_classes = [JWTAuthentication]

@@ -157,8 +157,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),  # Access token expires in 60 minutes
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=0.6),  # Access token expires in 60 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=1),
     "ROTATE_REFRESH_TOKENS": True,                 # Enable refresh token rotation
     "BLACKLIST_AFTER_ROTATION": True,              # Blacklist old refresh tokens after rotation
     "ALGORITHM": "HS256",                          # Use HS256 algorithm for signing

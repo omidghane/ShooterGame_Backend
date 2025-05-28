@@ -159,15 +159,21 @@ class RegisterAPIView(APIView):
         data = request.data
         username = data.get("username")
         password = data.get("password")
+        wallet_address = data.get("wallet_address")
         is_personnel = data.get("is_personnel", False)
 
-        if not username or not password:
-            raise ValidationError({"error": "Username and password are required."})
+        if not username or not password or not wallet_address:
+            raise ValidationError({"error": "Username, password, and wallet address are required."})
 
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=username, password=password, is_personnel=is_personnel)
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            is_personnel=is_personnel,
+            wallet_address=wallet_address  # Assuming the User model has a wallet_address field
+        )
         user.save()
 
         # Generate tokens for the user
