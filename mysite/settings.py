@@ -44,12 +44,13 @@ INSTALLED_APPS = [
     'myapp',
     'accounts.apps.AccountsConfig',
     'rest_framework',
-
+    'corsheaders',
 ]
 
 MIDDLEWARE = [  
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -157,8 +158,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=0.6),  # Access token expires in 60 minutes
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),  # Access token expires in 60 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=5),
     "ROTATE_REFRESH_TOKENS": True,                 # Enable refresh token rotation
     "BLACKLIST_AFTER_ROTATION": True,              # Blacklist old refresh tokens after rotation
     "ALGORITHM": "HS256",                          # Use HS256 algorithm for signing
@@ -178,5 +179,9 @@ EMAIL_USE_TLS = False  # Use TLS encryption
 EMAIL_USE_SSL = True
 EMAIL_FROM_ADDRESS = config('MAIL_FROM_ADDRESS')
 
-# CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS
-# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+# ]

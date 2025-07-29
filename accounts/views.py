@@ -19,6 +19,8 @@ from datetime import timedelta
 from django.conf import settings
 # Create your views here.
 
+from django.db import IntegrityError 
+
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -157,7 +159,7 @@ class RegisterAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         data = request.data
-        username = data.get("username")
+        username = data.get("username") 
         password = data.get("password")
         wallet_address = data.get("wallet_address")
         is_personnel = data.get("is_personnel", False)
@@ -168,22 +170,35 @@ class RegisterAPIView(APIView):
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(
-            username=username,
-            password=password,
-            is_personnel=is_personnel,
-            wallet_address=wallet_address  # Assuming the User model has a wallet_address field
-        )
-        user.save()
+        try:
 
-        # Generate tokens for the user
-        refresh = RefreshToken.for_user(user)
-        tokens = {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-        }
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                is_personnel=is_personnel,
+                wallet_address=wallet_address  # Assuming the User model has a wallet_address field
+            )
+            user.save()
 
-        return Response({
-            "message": "User registered successfully.",
-            "tokens": tokens
-        }, status=status.HTTP_201_CREATED)
+            # Generate tokens for the user
+            refresh = RefreshToken.for_user(user)
+            tokens = {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }
+            refresh_token_lifetime = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+            access_token_lifetime = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
+
+            return Response({
+                "message": "User registered successfully.",
+                "tokens": tokens,
+                "refresh_expires_in": int(refresh_token_lifetime.total_seconds()),
+                "access_expires_in": int(access_token_lifetime.total_seconds())
+            }, status=status.HTTP_201_CREATED)
+
+        except IntegrityError as e:
+            if "UNIQUE constraint failed: accounts_user.wallet_address" in str(e):
+                print(f"IntegrityError: {e}")
+                return Response({"error": "This wallet address is already registered."}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
