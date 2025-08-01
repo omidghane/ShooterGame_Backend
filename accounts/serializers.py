@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
 
 from .models import *
-
+import logging
+logger = logging.getLogger(__name__)
+import sys
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.id')
@@ -37,6 +40,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
+        sys.stdout.flush()
         data = super().validate(attrs)
 
         user = self.user
@@ -45,6 +49,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # data["firstname"] = user.profile.first_name
         # data["lastname"] = user.profile.last_name
         # data["user_image"] = 'http://192.168.2.6/' + user.profile.image.url
+        request = self.context['request']
+        wallet_address = request.data.get('wallet_address')
+
+        # Check if the wallet address matches the user's wallet address
+        if not self.user.wallet_address == wallet_address:
+            print(f"Received wallet address: {wallet_address}")
+            logger.info(f"Received wallet address: {wallet_address}")
+            raise AuthenticationFailed({"error": "Wallet address does not match."})
 
         return data
 
