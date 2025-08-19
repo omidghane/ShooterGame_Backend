@@ -14,4 +14,4 @@ COPY . .
 # EXPOSE 8080
 
 # ENTRYPOINT ["sh", "-c"]
-CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8080"]
+CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate"]
