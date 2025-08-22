@@ -28,3 +28,4 @@ python-decouple
 djangorestframework-simplejwt
 requests
 django-cors-headers
+gunicorn==21.2.0
