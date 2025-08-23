@@ -149,6 +149,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.data['access_expires_in'] = int(access_token_lifetime.total_seconds())
         return response
 
+class SimpleTokenObtainPairView(TokenObtainPairView):
+    serializer_class = SimpleTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            refresh_token_lifetime = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+            access_token_lifetime = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
+            response.data['refresh_expires_in'] = int(refresh_token_lifetime.total_seconds())
+            response.data['access_expires_in'] = int(access_token_lifetime.total_seconds())
+        return response
+
 
 class TokenRefreshView(TokenRefreshView):
     pass

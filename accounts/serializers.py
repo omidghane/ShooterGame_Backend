@@ -60,6 +60,22 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return data
 
+class SimpleTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        return token
+
+    def validate(self, attrs):
+        sys.stdout.flush()
+        data = super().validate(attrs)
+
+        user = self.user
+        data["user"] = user.id
+        data["username"] = user.username
+
+        # 🚫 No wallet check here
+        return data
 
 class UserDeviceSerializer(serializers.Serializer):
     employee_code = serializers.IntegerField()
