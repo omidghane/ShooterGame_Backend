@@ -12,7 +12,7 @@ urlpatterns = [
     # path('api/v1/', include('accounts.api.v1.urls', namespace='accounts-api')),
     path('api/profile/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/simple-token/', SimpleTokenObtainPairView.as_view(), name='simple_token_obtain_pair'),  # no wallet check
+    path('api/simple-token/', views.SimpleTokenObtainPairView.as_view(), name='simple_token_obtain_pair'),  # no wallet check
     path('api/token/refresh/', views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', views.RegisterAPIView.as_view(), name='register-api'),
 
